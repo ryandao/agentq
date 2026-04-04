@@ -1,0 +1,41 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: agentq
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  server:
+    build:
+      context: ./server
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: agentq
+      DB_SCHEMA: public
+      AGENTQ_REDIS_URL: redis://redis:6379/0
+      AGENTQ_TASK_QUEUE_SYSTEM: none
+      AGENTQ_SERVER_ADMIN_USERNAME: admin
+      AGENTQ_SERVER_ADMIN_PASSWORD: changeme
+      NODE_ENV: production
+      HOSTNAME: "0.0.0.0"
+
+volumes:
+  pgdata:

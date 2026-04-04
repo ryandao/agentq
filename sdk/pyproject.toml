@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentq"
+version = "0.7.0"
+description = "AgentQ SDK — agent observability for Python."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+authors = [{ name = "Ryan Dao" }]
+keywords = ["observability", "ai-agents", "llm", "tracing", "opentelemetry"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: System :: Monitoring",
+]
+dependencies = [
+    "opentelemetry-api>=1.20",
+    "opentelemetry-sdk>=1.20",
+    "opentelemetry-exporter-otlp-proto-http>=1.20",
+]
+
+[project.optional-dependencies]
+openai = ["openai>=1.0"]
+anthropic = ["anthropic>=0.20"]
+gemini = ["google-genai>=1.0"]
+celery = ["celery>=5.0"]
+all = ["openai>=1.0", "anthropic>=0.20", "google-genai>=1.0", "celery>=5.0"]
+
+[project.urls]
+Homepage = "https://github.com/ryandao/agentq"
+Repository = "https://github.com/ryandao/agentq"
+Issues = "https://github.com/ryandao/agentq/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["agentq*"]

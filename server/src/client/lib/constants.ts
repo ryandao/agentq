@@ -1,0 +1,4 @@
+export const POLL_INTERVAL_MS = 5000;
+
+export const COLLAPSE_LINE_THRESHOLD = 20;
+export const COLLAPSE_CHAR_THRESHOLD = 1200;

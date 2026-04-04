@@ -1,0 +1,41 @@
+# OS
+.DS_Store
+
+# Environment
+.env
+.env*.local
+*.pem
+
+# === Node / Next.js (server/) ===
+node_modules/
+.next/
+out/
+build/
+coverage/
+.pnp
+.pnp.js
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+server/src/generated/prisma
+
+# Subframe
+.subframe/
+
+# IDE / tools
+.claude/
+
+# === Python (sdk/) ===
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+*.egg
+.venv/
+venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/

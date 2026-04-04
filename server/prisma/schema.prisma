@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Agent {
+  id           String   @id @default(uuid())
+  name         String   @unique
+  description  String?
+  version      String?
+  metadata     Json?
+  registeredAt DateTime @default(now()) @map("registered_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("agents")
+}
+
+model Session {
+  id        String   @id
+  name      String?
+  summary   String?
+  userId    String?  @map("user_id")
+  userData  Json?    @map("user_data")
+  metadata  Json?
+  startedAt DateTime @default(now()) @map("started_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model Run {
+  id              String    @id @map("run_id")
+  sessionId       String?   @map("session_id")
+  taskName        String?   @map("task_name")
+  queueName       String?   @map("queue_name")
+  workerName      String?   @map("worker_name")
+  status          String    @default("PENDING")
+  error           String?
+  inputPreview    Json?     @map("input_preview")
+  outputPreview   Json?     @map("output_preview")
+  latestSpanName  String?   @map("latest_span_name")
+  latestSpanType  String?   @map("latest_span_type")
+  latestEvent     String?   @map("latest_event")
+  rootSpanId      String?   @map("root_span_id")
+  totalSpans      Int       @default(0) @map("total_spans")
+  activeSpanCount Int       @default(0) @map("active_span_count")
+  enqueuedAt      DateTime? @map("enqueued_at")
+  startedAt       DateTime? @map("started_at")
+  finishedAt      DateTime? @map("finished_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  summary         Json?
+  metadata        Json?
+  isDeleted       Boolean   @default(false) @map("is_deleted")
+
+
+
+  @@index([sessionId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([isDeleted, createdAt])
+  @@index([isDeleted, startedAt])
+  @@map("runs")
+}
+
+model Span {
+  id            String    @id @map("span_id")
+  runId         String    @map("run_id")
+  parentSpanId  String?   @map("parent_span_id")
+  agentName     String?   @map("agent_name")
+  name          String
+  runType       String    @map("run_type")
+  status        String?
+  startedAt     DateTime? @map("started_at")
+  finishedAt    DateTime? @map("finished_at")
+  inputPreview  Json?     @map("input_preview")
+  outputPreview Json?     @map("output_preview")
+  error         String?
+  metadata      Json?
+  tags          String[]  @default([])
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+
+
+  @@index([runId])
+  @@index([agentName])
+  @@index([runType])
+  @@map("spans")
+}
+
+model Event {
+  id        String   @id @default(uuid())
+  spanId    String?  @map("span_id")
+  runId     String   @map("run_id")
+  type      String
+  name      String?
+  message   String?
+  level     String?
+  data      Json?
+  timestamp DateTime @default(now())
+
+  @@index([spanId])
+  @@index([runId])
+  @@index([type])
+  @@map("events")
+}
