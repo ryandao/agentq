@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "agentq-sdk"
+version = "0.1.0"
+description = "AgentQ SDK — native framework integration for popular agent frameworks"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{ name = "DevSquad" }]
+
+dependencies = []
+
+[project.optional-dependencies]
+langchain = ["langchain>=0.1", "langchain-core>=0.1"]
+crewai = ["crewai>=0.30"]
+autogen = ["pyautogen>=0.2"]
+llamaindex = ["llama-index-core>=0.10"]
+all = [
+    "langchain>=0.1",
+    "langchain-core>=0.1",
+    "crewai>=0.30",
+    "pyautogen>=0.2",
+    "llama-index-core>=0.10",
+]
+dev = ["pytest>=8.0", "pytest-asyncio>=0.23"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
