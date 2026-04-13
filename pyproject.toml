@@ -1,0 +1,37 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "agentq-sdk"
+version = "0.1.0"
+description = "AgentQ SDK with auto-detection support for popular agent frameworks"
+readme = {text = "AgentQ SDK — Agent observability with auto-detection for popular frameworks.", content-type = "text/plain"}
+requires-python = ">=3.10"
+license = "MIT"
+dependencies = []
+
+[project.optional-dependencies]
+langchain = ["langchain>=0.1.0"]
+crewai = ["crewai>=0.1.0"]
+autogen = ["pyautogen>=0.2.0"]
+llamaindex = ["llama-index>=0.10.0"]
+openai-agents = ["openai-agents>=0.1.0"]
+all = [
+    "langchain>=0.1.0",
+    "crewai>=0.1.0",
+    "pyautogen>=0.2.0",
+    "llama-index>=0.10.0",
+    "openai-agents>=0.1.0",
+]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agentq"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
