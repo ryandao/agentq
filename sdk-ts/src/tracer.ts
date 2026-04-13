@@ -1,6 +1,11 @@
 import { trace, context, type Span, type Tracer } from "@opentelemetry/api";
 import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
-import { BatchSpanProcessor, SimpleSpanProcessor } from "@opentelemetry/sdk-trace-base";
+import {
+  BatchSpanProcessor,
+  SimpleSpanProcessor,
+  InMemorySpanExporter,
+  type SpanExporter,
+} from "@opentelemetry/sdk-trace-base";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-proto";
 import { Resource } from "@opentelemetry/resources";
 import { ATTR_SERVICE_NAME } from "@opentelemetry/semantic-conventions";
@@ -12,6 +17,7 @@ const LIBRARY_VERSION = "0.1.0";
 let _provider: NodeTracerProvider | null = null;
 let _tracer: Tracer | null = null;
 let _initialized = false;
+let _exporter: SpanExporter | null = null;
 
 /**
  * Initialize the AgentQ tracing pipeline.
@@ -38,11 +44,15 @@ export function initTracer(options: InitOptions = {}): Tracer {
     headers["x-agentq-api-key"] = apiKey;
   }
 
-  // Create OTLP exporter
-  const exporter = new OTLPTraceExporter({
-    url: `${endpoint}/v1/traces`,
-    headers,
-  });
+  // Create exporter — use InMemorySpanExporter for testing
+  if (options._exporter) {
+    _exporter = options._exporter;
+  } else {
+    _exporter = new OTLPTraceExporter({
+      url: `${endpoint}/v1/traces`,
+      headers,
+    });
+  }
 
   // Create resource
   const resource = new Resource({
@@ -59,11 +69,11 @@ export function initTracer(options: InitOptions = {}): Tracer {
   // Add span processor
   if (debug) {
     // In debug mode, use SimpleSpanProcessor for immediate export
-    _provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
+    _provider.addSpanProcessor(new SimpleSpanProcessor(_exporter));
   } else {
     const batchConfig = options.batchConfig ?? {};
     _provider.addSpanProcessor(
-      new BatchSpanProcessor(exporter, {
+      new BatchSpanProcessor(_exporter, {
         maxQueueSize: batchConfig.maxQueueSize ?? 2048,
         maxExportBatchSize: batchConfig.maxExportBatchSize ?? 512,
         scheduledDelayMillis: batchConfig.scheduledDelayMillis ?? 5000,
@@ -85,6 +95,14 @@ export function initTracer(options: InitOptions = {}): Tracer {
   }
 
   return _tracer;
+}
+
+/**
+ * Create an InMemorySpanExporter for testing.
+ * Use with `init({ _exporter: createTestExporter() })`.
+ */
+export function createTestExporter(): InMemorySpanExporter {
+  return new InMemorySpanExporter();
 }
 
 /**

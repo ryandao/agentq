@@ -160,5 +160,5 @@ export type {
 export { AgentQAttributes, SpanType } from "./types.js";
 
 // Low-level access
-export { getTracer, getActiveSpan, isInitialized } from "./tracer.js";
+export { getTracer, getActiveSpan, isInitialized, createTestExporter } from "./tracer.js";
 export { getSessionContext } from "./context.js";

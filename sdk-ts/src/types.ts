@@ -1,4 +1,5 @@
 import type { Span } from "@opentelemetry/api";
+import type { SpanExporter } from "@opentelemetry/sdk-trace-base";
 
 // ── Init options ──────────────────────────────────────────────────────────
 
@@ -20,6 +21,12 @@ export interface InitOptions {
     scheduledDelayMillis?: number;
     exportTimeoutMillis?: number;
   };
+  /**
+   * Custom span exporter (internal/testing use).
+   * When provided, overrides the default OTLP exporter.
+   * @internal
+   */
+  _exporter?: SpanExporter;
 }
 
 // ── Session options ───────────────────────────────────────────────────────
