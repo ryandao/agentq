@@ -48,12 +48,33 @@ def instrument() -> None:
     Monkey-patches openai, anthropic, and google-genai so that every LLM call
     is automatically wrapped in an agentq span with token-usage extraction.
     Also hooks Celery signals to capture queue wait time.
+    Additionally patches popular agent frameworks (LangChain, CrewAI, AutoGen,
+    LlamaIndex) so their runs are traced without needing ``@agent``.
     Safe to call even if any of these libraries are not installed.
     """
-    from agentq.integrations import openai_patch, anthropic_patch, gemini_patch, celery_patch
+    from agentq.integrations import (
+        openai_patch,
+        anthropic_patch,
+        gemini_patch,
+        celery_patch,
+        langchain_patch,
+        crewai_patch,
+        autogen_patch,
+        llamaindex_patch,
+    )
 
+    # LLM provider patches
     openai_patch.patch()
     anthropic_patch.patch()
     gemini_patch.patch()
+
+    # Task queue patches
     celery_patch.patch()
+
+    # Agent framework patches (no @agent decorator needed)
+    langchain_patch.patch()
+    crewai_patch.patch()
+    autogen_patch.patch()
+    llamaindex_patch.patch()
+
     logger.info("agentq auto-instrumentation activated")

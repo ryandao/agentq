@@ -39,6 +39,7 @@ def run_task(prompt: str) -> str:
 
 - **`@agent` decorator** -- Wraps functions and classes to create traced runs with input/output capture
 - **Auto-instrumentation** -- Monkey-patches OpenAI, Anthropic, and Google Gemini to trace every LLM call
+- **Framework support** -- Auto-instruments LangChain, CrewAI, AutoGen, and LlamaIndex — no `@agent` needed
 - **Session tracking** -- Group related runs into sessions with the `session` context manager
 - **Nested spans** -- Nested `@agent` calls and manual `track_agent`/`track_llm`/`track_tool` spans
 - **Celery integration** -- Captures queue wait time for Celery tasks
@@ -86,6 +87,19 @@ with agentq.track_llm("gpt-4") as span:
 with agentq.track_tool("web-search") as span:
     ...
 ```
+
+## Supported Agent Frameworks
+
+`agentq.instrument()` auto-patches these frameworks so their runs are traced without `@agent`:
+
+| Framework | What's Traced | Install |
+|-----------|---------------|---------|
+| [LangChain](docs/frameworks/langchain.md) | `Runnable.invoke()`, `ainvoke()` | `pip install agentq[langchain]` |
+| [CrewAI](docs/frameworks/crewai.md) | `Crew.kickoff()` | `pip install agentq[crewai]` |
+| [AutoGen](docs/frameworks/autogen.md) | `ConversableAgent.generate_reply()` | `pip install agentq[autogen]` |
+| [LlamaIndex](docs/frameworks/llamaindex.md) | `QueryEngine.query()`, `ChatEngine.chat()` | `pip install agentq[llamaindex]` |
+
+Install all frameworks at once: `pip install agentq[frameworks]`
 
 ## License
 
