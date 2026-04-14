@@ -5,17 +5,31 @@
  * and can bulk-register them with the AgentQ platform.
  */
 
-import type { AgentQConfig, AgentMetadata, Agent } from "./types/index.js";
+import type {
+  AgentQConfig,
+  AgentMetadata,
+  Agent,
+  RegistryEvents,
+  RegistryEventListener,
+} from "./types/index.js";
 import { AgentQClient } from "./client/index.js";
 
 /**
  * Singleton registry that collects all agents decorated with @agent.
+ *
+ * Supports lifecycle event listeners so you can react to registration,
+ * unregistration, and sync events.
  *
  * @example
  * ```ts
  * import { AgentRegistry } from "@agentq/sdk";
  *
  * const registry = AgentRegistry.getInstance();
+ *
+ * // Listen for registration events
+ * registry.on("registered", (metadata) => {
+ *   console.log(`Agent registered: ${metadata.name}`);
+ * });
  *
  * // Manually register an agent (alternative to the @agent decorator)
  * registry.register({
@@ -34,6 +48,8 @@ import { AgentQClient } from "./client/index.js";
 export class AgentRegistry {
   private static instance: AgentRegistry;
   private readonly agents: Map<string, AgentMetadata> = new Map();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private readonly listeners: Map<keyof RegistryEvents, Set<(...args: any[]) => void>> = new Map();
 
   private constructor() {}
 
@@ -52,6 +68,55 @@ export class AgentRegistry {
     AgentRegistry.instance = new AgentRegistry();
   }
 
+  // ── Event Emitter ──────────────────────────────────────────────────
+
+  /**
+   * Subscribe to a registry lifecycle event.
+   *
+   * @param event - The event name.
+   * @param listener - Callback invoked when the event fires.
+   * @returns A function that removes the listener when called.
+   */
+  on<K extends keyof RegistryEvents>(
+    event: K,
+    listener: RegistryEventListener<K>
+  ): () => void {
+    if (!this.listeners.has(event)) {
+      this.listeners.set(event, new Set());
+    }
+    this.listeners.get(event)!.add(listener);
+
+    // Return unsubscribe function
+    return () => {
+      this.listeners.get(event)?.delete(listener);
+    };
+  }
+
+  /**
+   * Remove a specific event listener.
+   */
+  off<K extends keyof RegistryEvents>(
+    event: K,
+    listener: RegistryEventListener<K>
+  ): void {
+    this.listeners.get(event)?.delete(listener);
+  }
+
+  /** Emit an event to all registered listeners. */
+  private emit<K extends keyof RegistryEvents>(
+    event: K,
+    data: RegistryEvents[K]
+  ): void {
+    const set = this.listeners.get(event);
+    if (set) {
+      for (const listener of set) {
+        listener(data);
+      }
+    }
+  }
+
+  // ── CRUD ───────────────────────────────────────────────────────────
+
   /**
    * Register an agent's metadata in the local registry.
    * Does not communicate with the server — use syncAll() for that.
@@ -60,6 +125,7 @@ export class AgentRegistry {
    */
   register(metadata: AgentMetadata): void {
     this.agents.set(metadata.name, metadata);
+    this.emit("registered", metadata);
   }
 
   /**
@@ -68,7 +134,11 @@ export class AgentRegistry {
    * @returns true if the agent was found and removed.
    */
   unregister(name: string): boolean {
-    return this.agents.delete(name);
+    const existed = this.agents.delete(name);
+    if (existed) {
+      this.emit("unregistered", name);
+    }
+    return existed;
   }
 
   /**
@@ -129,6 +199,7 @@ export class AgentRegistry {
       results.push(agent);
     }
 
+    this.emit("synced", results);
     return results;
   }
 }

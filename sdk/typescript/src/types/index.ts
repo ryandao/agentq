@@ -2,17 +2,44 @@
  * Core type definitions for the AgentQ TypeScript SDK.
  */
 
+// ── Constants ──────────────────────────────────────────────────────────
+
+/** All supported agent framework identifiers. */
+export const AGENT_FRAMEWORKS = [
+  "langchain",
+  "crewai",
+  "autogen",
+  "openai",
+  "anthropic",
+  "custom",
+] as const;
+
+/** All supported agent status values. */
+export const AGENT_STATUSES = [
+  "active",
+  "inactive",
+  "error",
+  "pending",
+] as const;
+
+/** All supported task status values. */
+export const TASK_STATUSES = [
+  "pending",
+  "running",
+  "completed",
+  "failed",
+] as const;
+
+// ── Core Types ─────────────────────────────────────────────────────────
+
 /** Supported agent framework types. */
-export type AgentFramework =
-  | "langchain"
-  | "crewai"
-  | "autogen"
-  | "openai"
-  | "anthropic"
-  | "custom";
+export type AgentFramework = (typeof AGENT_FRAMEWORKS)[number];
 
 /** Agent status in the AgentQ platform. */
-export type AgentStatus = "active" | "inactive" | "error" | "pending";
+export type AgentStatus = (typeof AGENT_STATUSES)[number];
+
+/** Task status. */
+export type TaskStatus = (typeof TASK_STATUSES)[number];
 
 /** Configuration for connecting to the AgentQ server. */
 export interface AgentQConfig {
@@ -24,6 +51,20 @@ export interface AgentQConfig {
   timeout?: number;
   /** Additional headers to include with every request. */
   headers?: Record<string, string>;
+  /** Retry configuration. If omitted, retries are disabled. */
+  retry?: RetryConfig;
+}
+
+/** Configuration for automatic request retries. */
+export interface RetryConfig {
+  /** Maximum number of retry attempts. Defaults to 3. */
+  maxRetries?: number;
+  /** Base delay in ms for exponential backoff. Defaults to 1000. */
+  baseDelay?: number;
+  /** Maximum delay in ms between retries. Defaults to 30000. */
+  maxDelay?: number;
+  /** HTTP status codes that should trigger a retry. Defaults to [429, 500, 502, 503, 504]. */
+  retryableStatuses?: number[];
 }
 
 /** Metadata describing an agent's capabilities and configuration. */
@@ -159,9 +200,67 @@ export interface AgentTask {
   /** Task output/result, if completed. */
   output?: string;
   /** Task status. */
-  status: "pending" | "running" | "completed" | "failed";
+  status: TaskStatus;
   /** ISO 8601 timestamp of task creation. */
   createdAt: string;
   /** ISO 8601 timestamp of task completion. */
   completedAt?: string;
+}
+
+// ── Registry Event Types ───────────────────────────────────────────────
+
+/** Events emitted by the AgentRegistry. */
+export interface RegistryEvents {
+  /** Fired when an agent is registered locally. */
+  registered: AgentMetadata;
+  /** Fired when an agent is unregistered locally. */
+  unregistered: string;
+  /** Fired when agents are synced with the platform. */
+  synced: Agent[];
+}
+
+/** Listener function for registry events. */
+export type RegistryEventListener<K extends keyof RegistryEvents> = (
+  data: RegistryEvents[K]
+) => void;
+
+// ── Type Guards ────────────────────────────────────────────────────────
+
+/** Check if a value is a valid AgentFramework. */
+export function isAgentFramework(value: unknown): value is AgentFramework {
+  return (
+    typeof value === "string" &&
+    AGENT_FRAMEWORKS.includes(value as AgentFramework)
+  );
+}
+
+/** Check if a value is a valid AgentStatus. */
+export function isAgentStatus(value: unknown): value is AgentStatus {
+  return (
+    typeof value === "string" && AGENT_STATUSES.includes(value as AgentStatus)
+  );
+}
+
+/** Check if a value is a valid TaskStatus. */
+export function isTaskStatus(value: unknown): value is TaskStatus {
+  return (
+    typeof value === "string" && TASK_STATUSES.includes(value as TaskStatus)
+  );
+}
+
+/**
+ * Check if a value looks like an Agent object from the API.
+ * Performs structural validation of the shape.
+ */
+export function isAgent(value: unknown): value is Agent {
+  if (typeof value !== "object" || value === null) return false;
+  const obj = value as Record<string, unknown>;
+  return (
+    typeof obj["id"] === "string" &&
+    typeof obj["name"] === "string" &&
+    isAgentStatus(obj["status"]) &&
+    Array.isArray(obj["capabilities"]) &&
+    typeof obj["createdAt"] === "string" &&
+    typeof obj["updatedAt"] === "string"
+  );
 }
