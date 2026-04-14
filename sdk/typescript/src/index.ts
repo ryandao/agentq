@@ -69,6 +69,7 @@ export {
 
 // ── Client ──────────────────────────────────────────────────────────────
 export { AgentQClient } from "./client/index.js";
+export type { RequestHook, ResponseHook } from "./client/index.js";
 
 // ── Decorators ──────────────────────────────────────────────────────────
 export { agent, getAgentMetadata, AGENT_METADATA_KEY } from "./decorators/index.js";
