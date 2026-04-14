@@ -151,6 +151,84 @@ try {
 }
 ```
 
+## Retry with Exponential Backoff
+
+Enable automatic retries for transient failures:
+
+```ts
+const client = new AgentQClient({
+  baseUrl: "https://api.agentq.dev",
+  apiKey: process.env.AGENTQ_API_KEY!,
+  retry: {
+    maxRetries: 3,              // Up to 3 retries (4 total attempts)
+    baseDelay: 1000,            // Start with 1s delay
+    maxDelay: 30_000,           // Cap delay at 30s
+    retryableStatuses: [429, 500, 502, 503, 504], // Default
+  },
+});
+```
+
+Retries use exponential backoff with full jitter. Network errors and timeouts are also retried automatically.
+
+## Request & Response Hooks
+
+Add logging, metrics, or custom headers with hooks:
+
+```ts
+const client = new AgentQClient({ baseUrl, apiKey })
+  .onRequest((method, url, headers) => {
+    console.log(`→ ${method} ${url}`);
+    // Optionally return modified headers
+    return { ...headers, "X-Request-Id": crypto.randomUUID() };
+  })
+  .onResponse((method, url, status, durationMs) => {
+    console.log(`← ${status} ${method} ${url} (${durationMs}ms)`);
+  });
+```
+
+## Type Guards
+
+Validate values at runtime with built-in type guards:
+
+```ts
+import {
+  isAgentFramework,
+  isAgentStatus,
+  isAgent,
+  AGENT_FRAMEWORKS,
+} from "@agentq/sdk";
+
+isAgentFramework("langchain"); // true
+isAgentFramework("unknown");   // false
+
+isAgentStatus("active");       // true
+isAgent(responseData);         // structural check
+```
+
+## Registry Events
+
+React to agent lifecycle events:
+
+```ts
+const registry = AgentRegistry.getInstance();
+
+// Subscribe and get an unsubscribe function
+const unsubscribe = registry.on("registered", (metadata) => {
+  console.log(`Agent registered: ${metadata.name}`);
+});
+
+registry.on("unregistered", (name) => {
+  console.log(`Agent removed: ${name}`);
+});
+
+registry.on("synced", (agents) => {
+  console.log(`Synced ${agents.length} agents with platform`);
+});
+
+// Clean up when done
+unsubscribe();
+```
+
 ## Configuration
 
 ```ts
@@ -164,6 +242,13 @@ const client = new AgentQClient({
   headers: {
     // Additional headers for every request
     "X-Custom-Header": "value",
+  },
+
+  // Optional: enable retries
+  retry: {
+    maxRetries: 3,
+    baseDelay: 1000,
+    maxDelay: 30_000,
   },
 });
 ```
@@ -183,6 +268,8 @@ const client = new AgentQClient({
 | `getNextTask(agentId)` | Get next pending task |
 | `submitTaskResult(agentId, taskId, output)` | Submit task result |
 | `reportTaskFailure(agentId, taskId, error)` | Report task failure |
+| `onRequest(hook)` | Register pre-request hook |
+| `onResponse(hook)` | Register post-response hook |
 
 ### `AgentRegistry`
 
@@ -196,6 +283,8 @@ const client = new AgentQClient({
 | `has(name)` | Check if agent is registered |
 | `syncAll(config)` | Sync all agents with platform |
 | `clear()` | Clear all local registrations |
+| `on(event, listener)` | Subscribe to lifecycle event |
+| `off(event, listener)` | Remove event listener |
 
 ### Decorator: `@agent(options?)`
 
