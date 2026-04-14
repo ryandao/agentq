@@ -3,6 +3,7 @@
  */
 
 import { HttpClient } from "./http.js";
+import type { RequestHook, ResponseHook } from "./http.js";
 import type {
   Agent,
   AgentQConfig,
@@ -13,6 +14,8 @@ import type {
   RegisterAgentRequest,
   UpdateAgentRequest,
 } from "../types/index.js";
+
+export type { RequestHook, ResponseHook } from "./http.js";
 
 /**
  * Client for the AgentQ platform.
@@ -39,6 +42,24 @@ export class AgentQClient {
 
   constructor(config: AgentQConfig) {
     this.http = new HttpClient(config);
+  }
+
+  /**
+   * Register a hook invoked before each request.
+   * Useful for logging, metrics, or header injection.
+   */
+  onRequest(hook: RequestHook): this {
+    this.http.onRequest(hook);
+    return this;
+  }
+
+  /**
+   * Register a hook invoked after each response.
+   * Useful for logging, metrics, or latency tracking.
+   */
+  onResponse(hook: ResponseHook): this {
+    this.http.onResponse(hook);
+    return this;
   }
 
   // ── Agent CRUD ────────────────────────────────────────────────────────
