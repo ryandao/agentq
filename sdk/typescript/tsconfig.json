@@ -15,11 +15,13 @@
     "resolveJsonModule": true,
     "moduleResolution": "bundler",
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "exactOptionalPropertyTypes": false,
+    "noUncheckedIndexedAccess": true,
+    "isolatedModules": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "tests"]
