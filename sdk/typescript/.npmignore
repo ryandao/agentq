@@ -1,0 +1,20 @@
+# Source files (dist is published)
+src/
+tests/
+
+# Config
+tsconfig.json
+tsup.config.ts
+vitest.config.ts
+.eslintrc.json
+.editorconfig
+
+# Dev artifacts
+coverage/
+.vitest/
+*.tsbuildinfo
+node_modules/
+
+# Git
+.git/
+.gitignore
