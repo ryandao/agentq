@@ -4,6 +4,7 @@ import { ReactNode, useCallback, useMemo, useState } from "react";
 import {
     FeatherActivity,
     FeatherAlertCircle,
+    FeatherClock,
     FeatherCpu,
     FeatherDatabase,
     FeatherHash,
