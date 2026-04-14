@@ -25,8 +25,11 @@ jobs:
       - run: npm test
 
   sdk:
-    name: SDK (lint)
+    name: SDK (lint + test)
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13"]
     defaults:
       run:
         working-directory: sdk
@@ -35,7 +38,8 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python-version }}
 
-      - run: pip install -e .
+      - run: pip install -e ".[dev]"
       - run: python -c "import agentq; print('import ok')"
+      - run: python -m pytest tests/ -v --tb=short --cov=agentq --cov-report=term-missing
