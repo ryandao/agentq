@@ -39,7 +39,9 @@
 export type {
   AgentFramework,
   AgentStatus,
+  TaskStatus,
   AgentQConfig,
+  RetryConfig,
   AgentMetadata,
   AgentDecoratorOptions,
   Agent,
@@ -50,6 +52,19 @@ export type {
   HeartbeatPayload,
   ApiError,
   AgentTask,
+  RegistryEvents,
+  RegistryEventListener,
+} from "./types/index.js";
+
+// ── Constants & Type Guards ────────────────────────────────────────────
+export {
+  AGENT_FRAMEWORKS,
+  AGENT_STATUSES,
+  TASK_STATUSES,
+  isAgentFramework,
+  isAgentStatus,
+  isTaskStatus,
+  isAgent,
 } from "./types/index.js";
 
 // ── Client ──────────────────────────────────────────────────────────────
