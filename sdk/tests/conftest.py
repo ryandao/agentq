@@ -73,3 +73,22 @@ def reset_patches():
     gemini_patch._original_generate = None
     celery_patch._patched = False
     celery_patch._handler = None
+
+    # Reset framework integrations
+    from agentq.frameworks import (
+        langchain_integration,
+        crewai_integration,
+        autogen_integration,
+        llamaindex_integration,
+        haystack_integration,
+    )
+    langchain_integration._patched = False
+    langchain_integration._state.clear()
+    crewai_integration._patched = False
+    crewai_integration._originals.clear()
+    autogen_integration._patched = False
+    autogen_integration._originals.clear()
+    llamaindex_integration._patched = False
+    llamaindex_integration._originals.clear()
+    haystack_integration._patched = False
+    haystack_integration._originals.clear()
