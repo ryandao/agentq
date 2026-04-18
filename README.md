@@ -33,6 +33,16 @@ npm run dev
 
 See [`server/README.md`](server/README.md) for full setup instructions.
 
+### Published server image
+
+`agentq-server` releases publish a container image to GHCR:
+
+```bash
+docker pull ghcr.io/ryandao/agentq-server:<version>
+```
+
+Stable releases tagged as `server-v<version>` also update the `latest` tag.
+
 ### 2. Install the SDK
 
 ```bash

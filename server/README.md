@@ -58,11 +58,11 @@ See [`.env.example`](.env.example) for all available configuration options.
 
 ## Deployment
 
-A multi-stage `Dockerfile` is included for production builds. The included GitHub Actions workflow (`deploy-server.yml`) shows an example deployment to AWS App Runner.
+A multi-stage `Dockerfile` is included for production builds. Releases tagged as `server-v<version>` publish a reusable image to GHCR, and manual workflow runs can publish ad hoc tags.
 
 ```bash
-docker build -t agentq-server .
-docker run -p 3000:3000 --env-file .env agentq-server
+docker pull ghcr.io/ryandao/agentq-server:<version>
+docker run -p 3000:3000 --env-file .env ghcr.io/ryandao/agentq-server:<version>
 ```
 
 ## Testing
