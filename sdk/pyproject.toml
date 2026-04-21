@@ -32,7 +32,21 @@ openai = ["openai>=1.0"]
 anthropic = ["anthropic>=0.20"]
 gemini = ["google-genai>=1.0"]
 celery = ["celery>=5.0"]
-all = ["openai>=1.0", "anthropic>=0.20", "google-genai>=1.0", "celery>=5.0"]
+langchain = ["langchain-core>=0.1"]
+crewai = ["crewai>=0.1"]
+autogen = ["pyautogen>=0.2"]
+llamaindex = ["llama-index-core>=0.10"]
+haystack = ["haystack-ai>=2.0"]
+all = [
+    "openai>=1.0", "anthropic>=0.20", "google-genai>=1.0", "celery>=5.0",
+    "langchain-core>=0.1", "crewai>=0.1", "pyautogen>=0.2",
+    "llama-index-core>=0.10", "haystack-ai>=2.0",
+]
+dev = ["pytest>=7.0", "pytest-cov>=4.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
 
 [project.urls]
 Homepage = "https://github.com/ryandao/agentq"
