@@ -9,15 +9,27 @@ from uuid import UUID
 
 logger = logging.getLogger(__name__)
 
+# Import BaseCallbackHandler so we inherit required attributes
+# (raise_error, ignore_chain, etc.) that LangChain's CallbackManager expects.
+try:
+    from langchain_core.callbacks import BaseCallbackHandler as _Base
+except ImportError:  # pragma: no cover
+    _Base = object  # type: ignore[misc,assignment]
 
-class AgentQCallbackHandler:
+
+class AgentQCallbackHandler(_Base):  # type: ignore[misc]
     """LangChain callback handler that creates agentq OpenTelemetry spans.
 
     Automatically traces chains, LLM calls, tool calls, and retrievers
     as agentq spans without requiring the ``@agent`` decorator.
+
+    Inherits from ``BaseCallbackHandler`` so LangChain's callback manager
+    recognises it as a valid handler (provides ``raise_error``,
+    ``ignore_chain``, and other required attributes).
     """
 
     def __init__(self) -> None:
+        super().__init__()
         self._spans: dict[UUID, Any] = {}  # run_id -> (span, token)
 
     def _start_span(
@@ -88,7 +100,12 @@ class AgentQCallbackHandler:
         parent_run_id: UUID | None = None,
         **kwargs: Any,
     ) -> None:
-        name = serialized.get("name") or serialized.get("id", ["unknown"])[-1]
+        serialized = serialized or {}
+        name = (
+            serialized.get("name")
+            or (serialized.get("id", ["unknown"]) or ["unknown"])[-1]
+            or kwargs.get("name", "chain")
+        )
         self._start_span(
             run_id, name, "agent",
             parent_run_id=parent_run_id,
@@ -125,6 +142,7 @@ class AgentQCallbackHandler:
         parent_run_id: UUID | None = None,
         **kwargs: Any,
     ) -> None:
+        serialized = serialized or {}
         model = serialized.get("kwargs", {}).get("model_name") or serialized.get("name", "llm")
         self._start_span(
             run_id, model, "llm",
@@ -171,6 +189,7 @@ class AgentQCallbackHandler:
         parent_run_id: UUID | None = None,
         **kwargs: Any,
     ) -> None:
+        serialized = serialized or {}
         name = serialized.get("name", "tool")
         self._start_span(
             run_id, name, "tool",
@@ -207,6 +226,7 @@ class AgentQCallbackHandler:
         parent_run_id: UUID | None = None,
         **kwargs: Any,
     ) -> None:
+        serialized = serialized or {}
         name = serialized.get("name", "retriever")
         self._start_span(
             run_id, name, "tool",
