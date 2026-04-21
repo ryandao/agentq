@@ -1,0 +1,11 @@
+# AgentQ SDK — install from the local repo (with AutoGen extras)
+agentq[autogen] @ file://../../sdk
+
+# AutoGen framework (optional — example runs in mock mode without it)
+# Uncomment below to install AutoGen for real framework auto-instrumentation:
+# pyautogen>=0.2
+
+# OpenTelemetry dependencies (included transitively by agentq, listed for clarity)
+opentelemetry-api>=1.20
+opentelemetry-sdk>=1.20
+opentelemetry-exporter-otlp-proto-http>=1.20

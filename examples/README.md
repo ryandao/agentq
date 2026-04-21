@@ -20,6 +20,8 @@ This starts the AgentQ server at `http://localhost:3000`. Once running, open the
 |---------|-----------|-------------|
 | [`native-multi-agent/`](native-multi-agent/) | AgentQ `@agent` decorator | Orchestrator agent delegating to research + writing specialist agents with tool calls |
 | [`langchain-multi-agent/`](langchain-multi-agent/) | LangChain + AgentQ auto-instrumentation | Multi-agent content pipeline using LangChain chains with automatic trace capture |
+| [`crewai-multi-agent/`](crewai-multi-agent/) | CrewAI + AgentQ auto-instrumentation | Marketing campaign crew with sequential task execution across analyst, strategist, and copywriter agents |
+| [`autogen-multi-agent/`](autogen-multi-agent/) | AutoGen + AgentQ auto-instrumentation | Software dev team conversation with architect, developer, and reviewer agents taking turns |
 
 ## Conventions
 

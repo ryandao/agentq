@@ -1,0 +1,11 @@
+# AgentQ SDK — install from the local repo (with CrewAI extras)
+agentq[crewai] @ file://../../sdk
+
+# CrewAI framework (optional — example runs in mock mode without it)
+# Uncomment below to install CrewAI for real framework auto-instrumentation:
+# crewai>=0.30
+
+# OpenTelemetry dependencies (included transitively by agentq, listed for clarity)
+opentelemetry-api>=1.20
+opentelemetry-sdk>=1.20
+opentelemetry-exporter-otlp-proto-http>=1.20
