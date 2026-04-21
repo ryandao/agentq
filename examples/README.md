@@ -16,10 +16,21 @@ This starts the AgentQ server at `http://localhost:3000`. Once running, open the
 
 ## Examples
 
+### CLI Examples
+
 | Example | Framework | Description |
 |---------|-----------|-------------|
 | [`native-multi-agent/`](native-multi-agent/) | AgentQ `@agent` decorator | Orchestrator agent delegating to research + writing specialist agents with tool calls |
 | [`langchain-multi-agent/`](langchain-multi-agent/) | LangChain + AgentQ auto-instrumentation | Multi-agent content pipeline using LangChain chains with automatic trace capture |
+
+### Interactive Chat Apps
+
+| App | Pattern | Description |
+|-----|---------|-------------|
+| [`chat-apps/support-bot/`](chat-apps/support-bot/) | Router / Dispatcher | Customer support bot routing questions to specialist agents (Billing, Technical, FAQ) |
+| [`chat-apps/research-assistant/`](chat-apps/research-assistant/) | Sequential Pipeline | Research assistant flowing queries through Researcher → Analyzer → Writer agents |
+
+See [`chat-apps/README.md`](chat-apps/README.md) for details on running the Streamlit chat apps.
 
 ## Conventions
 
