@@ -19,6 +19,7 @@
         "test:watch": "vitest"
     },
     "dependencies": {
+        "@agentq/infra": "file:../packages/infra",
         "@google/genai": "^1.46.0",
         "@prisma/client": "^6.19.2",
         "@subframe/core": "^1.154.0",
