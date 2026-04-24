@@ -8,6 +8,7 @@ Interactive multi-agent chat applications with Streamlit UI for testing AgentQ o
 |-----|---------|-------------|
 | [`support-bot/`](support-bot/) | **Router / Dispatcher** | Customer support bot that routes questions to specialist agents (Billing, Technical, FAQ). Demonstrates branching trace topology. |
 | [`research-assistant/`](research-assistant/) | **Sequential Pipeline** | Research assistant that flows queries through Researcher → Analyzer → Writer agents. Demonstrates linear trace chains. |
+| [`code-review-assistant/`](code-review-assistant/) | **Hierarchical Delegation** | Code review assistant where a Manager delegates to Security, Style, and Logic reviewer agents. Demonstrates parent-child trace hierarchy. |
 
 ## Prerequisites
 
@@ -56,7 +57,11 @@ examples/chat-apps/
 │   ├── README.md
 │   ├── requirements.txt
 │   └── main.py
-└── research-assistant/
+├── research-assistant/
+│   ├── README.md
+│   ├── requirements.txt
+│   └── main.py
+└── code-review-assistant/
     ├── README.md
     ├── requirements.txt
     └── main.py
