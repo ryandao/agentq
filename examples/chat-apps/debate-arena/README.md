@@ -1,6 +1,6 @@
-# Debate Arena — Collaborative / Discussion Pattern
+# Debate Arena — Collaborative Multi-Round Pattern
 
-Multiple expert agents debate a user's topic in rounds, then a Moderator synthesizes a balanced conclusion. Demonstrates **multi-round collaborative traces** — multiple agent spans with back-and-forth interactions.
+Multiple expert agents debate a user's topic across multiple rounds with **context accumulation**, then a Moderator synthesizes a balanced conclusion. Demonstrates **collaborative multi-agent traces** — each round's agents receive and build upon prior arguments, producing distinct Round 1 (opening positions) and Round 2 (rebuttals) responses visible in AgentQ.
 
 ## Architecture
 
@@ -13,23 +13,27 @@ User (poses topic)
 │ Orchestrator      │
 └──────┬───────────┘
        │
-  ┌────┴───── Round 1 ─────────────────┐
-  │                                     │
-  │  🌟 Optimist → 🔍 Skeptic → ⚖️ Pragmatist
-  │                                     │
-  ├────────── Round 2 ─────────────────┤
-  │                                     │
-  │  🌟 Optimist → 🔍 Skeptic → ⚖️ Pragmatist
-  │                                     │
-  └─────────────────────────────────────┘
+  ┌────┴───── Round 1 (Opening Positions) ──────┐
+  │                                              │
+  │  🌟 Optimist → 🔍 Skeptic → ⚖️ Pragmatist    │
+  │       │              │             │          │
+  │       └──── context accumulates ───┘          │
+  │                                              │
+  ├────────── Round 2 (Rebuttals) ──────────────┤
+  │                                              │
+  │  🌟 Optimist → 🔍 Skeptic → ⚖️ Pragmatist    │
+  │  (responds to    (responds to   (refines     │
+  │   R1 Skeptic)     R1 Optimist)   position)   │
+  │                                              │
+  └──────────────────────────────────────────────┘
        │
        ▼
 ┌──────────────────┐
 │ 🏛️ Moderator     │  ← Synthesizes balanced conclusion
-└──────────────────┘
+└──────────────────┘       referencing both rounds
 ```
 
-Each agent contribution appears as a span in the AgentQ trace, showing the multi-round collaborative flow.
+**Key feature:** Round 2 responses are *different* from Round 1 — each speaker references and rebuts arguments from the prior round, demonstrating real context accumulation across the multi-agent trace.
 
 ## Run
 
@@ -48,34 +52,39 @@ Then open `http://localhost:3000` to see traces in the AgentQ dashboard.
 
 ## What to Try
 
-- **"Will AI replace most jobs?"** → Rich debate with AI-specific arguments from all three experts
-- **"Is remote work better than office work?"** → Balanced debate on the future of work
-- **"Is cryptocurrency the future of finance?"** → Sharply divided debate with strong arguments
-- **"Can we solve climate change with technology?"** → Nuanced debate with surprising areas of consensus
+- **"Will AI replace most jobs?"** → Rich debate: Optimist's ATM analogy meets Skeptic's "cognition is different" rebuttal
+- **"Is remote work better than office work?"** → Balanced debate converging on structured hybrid by Round 2
+- **"Is cryptocurrency the future of finance?"** → Sharpest disagreement, with Pragmatist refining stablecoin focus in Round 2
+- **"Can we solve climate change with technology?"** → Surprising convergence on nuclear + renewables + storage by Round 2
 
-Watch the AgentQ dashboard — each debate creates a multi-round trace showing all expert contributions and the moderator's synthesis.
+Watch the AgentQ dashboard — each debate creates a multi-round trace showing how speakers' arguments evolve across rounds.
 
 ## Trace Topology
 
 ```
 session (conversation)
   └── debate-orchestrator
-        ├── optimist-agent (Round 1)
-        │     ├── research-positive-evidence (tool)
+        ├── optimist-agent (Round 1)       ← Opening position
+        │     ├── research-optimist-evidence (tool)
         │     └── generate-optimist-view (LLM call)
-        ├── skeptic-agent (Round 1)
-        │     ├── research-counterarguments (tool)
+        ├── skeptic-agent (Round 1)        ← Opening position
+        │     ├── research-skeptic-evidence (tool)
         │     └── generate-skeptic-view (LLM call)
-        ├── pragmatist-agent (Round 1)
-        │     ├── analyze-perspectives (tool)
+        ├── pragmatist-agent (Round 1)     ← Opening position
+        │     ├── research-pragmatist-evidence (tool)
         │     └── generate-pragmatist-view (LLM call)
-        ├── optimist-agent (Round 2)
-        │     └── ...
-        ├── skeptic-agent (Round 2)
-        │     └── ...
-        ├── pragmatist-agent (Round 2)
-        │     └── ...
-        └── moderator-agent
+        ├── optimist-agent (Round 2)       ← Rebuttal (references R1 Skeptic)
+        │     ├── research-optimist-evidence (tool)
+        │     └── generate-optimist-view (LLM call)
+        ├── skeptic-agent (Round 2)        ← Rebuttal (references R1 Optimist)
+        │     ├── research-skeptic-evidence (tool)
+        │     └── generate-skeptic-view (LLM call)
+        ├── pragmatist-agent (Round 2)     ← Refined position
+        │     ├── research-pragmatist-evidence (tool)
+        │     └── generate-pragmatist-view (LLM call)
+        └── moderator-agent                ← References arguments from both rounds
               ├── tally-debate (tool)
               └── synthesize-conclusion (LLM call)
 ```
+
+Each agent span's input includes the accumulated context length and preview, allowing you to see how context grows through the debate.
