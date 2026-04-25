@@ -2,7 +2,7 @@ export { ObservabilityAppShell } from "./components/shell";
 export { OverviewPageView } from "./pages/overview";
 export { RunsPageView } from "./pages/runs";
 export { RunDetailPageView } from "./pages/run-detail";
-export { InfrastructurePageView } from "./pages/infrastructure";
+export { InfrastructurePageView } from "@agentq/infra/client";
 export { SessionsPageView } from "./pages/sessions";
 export { SessionDetailPageView } from "./pages/session-detail";
 export { AgentsPageView } from "./pages/agents";

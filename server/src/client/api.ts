@@ -124,50 +124,14 @@ export async function fetchRunSearch(
 }
 
 // ---------------------------------------------------------------------------
-// Infrastructure
+// Infrastructure — re-exported from @agentq/infra/client
 // ---------------------------------------------------------------------------
 
-export async function fetchInfraSnapshot(): Promise<InfraSnapshotResponse> {
-    const response = await fetch("/api/infrastructure/snapshot", {
-        method: "GET",
-        credentials: "include",
-        cache: "no-store",
-    });
-    await validateResponse(response);
-    return (await response.json()) as InfraSnapshotResponse;
-}
-
-export async function fetchInfraAnalytics(
-    from: string,
-    to: string,
-): Promise<InfraAnalyticsResponse> {
-    const params = new URLSearchParams({ from, to });
-    const response = await fetch(
-        `/api/infrastructure/analytics?${params}`,
-        {
-            method: "GET",
-            credentials: "include",
-            cache: "no-store",
-        },
-    );
-    await validateResponse(response);
-    return (await response.json()) as InfraAnalyticsResponse;
-}
-
-export async function fetchInfraSuggestions(
-    hours = 24,
-): Promise<InfraSuggestionsResponse> {
-    const response = await fetch(
-        `/api/infrastructure/suggestions?hours=${hours}`,
-        {
-            method: "GET",
-            credentials: "include",
-            cache: "no-store",
-        },
-    );
-    await validateResponse(response);
-    return (await response.json()) as InfraSuggestionsResponse;
-}
+export {
+    fetchInfraSnapshot,
+    fetchInfraAnalytics,
+    fetchInfraSuggestions,
+} from "@agentq/infra/client";
 
 // ---------------------------------------------------------------------------
 // Agents
