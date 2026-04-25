@@ -1,1 +1,1 @@
-export { InfrastructurePageView } from "./infrastructure-page.js";
+export { InfrastructurePageView } from "./infrastructure-page";

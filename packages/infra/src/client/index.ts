@@ -7,7 +7,7 @@ export {
     fetchInfraSnapshot,
     fetchInfraAnalytics,
     fetchInfraSuggestions,
-} from "./api.js";
+} from "./api";
 
 // Hooks
 export {
@@ -15,13 +15,13 @@ export {
     useInfraSuggestions,
     useInfraAnalytics,
     useQueueHistory,
-} from "./hooks.js";
-export type { InfraSnapshotQueryState } from "./hooks.js";
+} from "./hooks";
+export type { InfraSnapshotQueryState } from "./hooks";
 
 // Components
-export { InfrastructurePageView } from "./components/index.js";
+export { InfrastructurePageView } from "./components";
 
 // Navigation
 export {
     INFRA_NAV_ITEM,
-} from "./navigation.js";
+} from "./navigation";

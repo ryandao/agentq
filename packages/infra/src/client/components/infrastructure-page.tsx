@@ -32,8 +32,8 @@ import type {
     InfraSnapshotResponse,
     ObservabilityBrokerQueue,
     ObservabilityWorker,
-} from "../../types.js";
-import { useInfraSnapshot, useInfraSuggestions, useInfraAnalytics, useQueueHistory } from "../hooks.js";
+} from "../../types";
+import { useInfraSnapshot, useInfraSuggestions, useInfraAnalytics, useQueueHistory } from "../hooks";
 import { makeTimeRange } from "@/src/client/lib/time-range";
 import { formatCustomLabel } from "@/src/client/lib/format";
 import type { TimeRange, TimeRangePreset, InfraTab } from "@/src/client/lib/types";

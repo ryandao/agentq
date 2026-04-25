@@ -6,7 +6,7 @@ import type {
     InfraSnapshotResponse,
     InfraAnalyticsResponse,
     InfraSuggestionsResponse,
-} from "../types.js";
+} from "../types";
 
 async function validateResponse(response: Response): Promise<void> {
     if (response.ok) {

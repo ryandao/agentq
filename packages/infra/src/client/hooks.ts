@@ -9,12 +9,12 @@ import type {
     InfraAnalyticsResponse,
     InfraSuggestionsResponse,
     InfraSnapshotResponse,
-} from "../types.js";
+} from "../types";
 import {
     fetchInfraAnalytics,
     fetchInfraSnapshot,
     fetchInfraSuggestions,
-} from "./api.js";
+} from "./api";
 import type { TimeRange } from "@/src/client/lib/types";
 
 /** Default polling interval for live infrastructure data. */
