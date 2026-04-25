@@ -1,7 +1,7 @@
 {
     "name": "@agentq/infra",
     "version": "0.1.0",
-    "description": "Infrastructure monitoring types and utilities for AgentQ",
+    "description": "Infrastructure monitoring types, hooks, and UI for AgentQ",
     "license": "MIT",
     "author": "Ryan Dao",
     "repository": {
@@ -18,6 +18,10 @@
             "types": "./dist/index.d.ts",
             "import": "./dist/index.js",
             "default": "./dist/index.js"
+        },
+        "./client": {
+            "types": "./src/client/index.ts",
+            "default": "./src/client/index.ts"
         }
     },
     "files": [
@@ -28,6 +32,18 @@
         "build": "tsc",
         "clean": "rm -rf dist",
         "prepublishOnly": "npm run build"
+    },
+    "peerDependencies": {
+        "react": "^18",
+        "@subframe/core": "^1"
+    },
+    "peerDependenciesMeta": {
+        "react": {
+            "optional": false
+        },
+        "@subframe/core": {
+            "optional": false
+        }
     },
     "devDependencies": {
         "typescript": "^5"

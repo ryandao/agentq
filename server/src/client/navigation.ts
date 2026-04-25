@@ -1,3 +1,5 @@
+import { INFRA_NAV_ITEM } from "@agentq/infra/client";
+
 export interface ObservabilityNavItem {
     href: string;
     label: string;
@@ -30,16 +32,7 @@ export const OBSERVABILITY_NAV_ITEMS: ObservabilityNavItem[] = [
         match: (pathname) =>
             pathname === "/runs" || pathname.startsWith("/runs/"),
     },
-    {
-        href: "/infrastructure",
-        label: "Infrastructure",
-        description: "Workers, queues, and system health",
-        icon: "FeatherServer",
-        match: (pathname) =>
-            pathname === "/infrastructure" ||
-            pathname === "/workers" ||
-            pathname === "/queues",
-    },
+    INFRA_NAV_ITEM,
     {
         href: "/sessions",
         label: "Sessions",
